@@ -1,0 +1,1037 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hostel Hub</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Bootstrap -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    
+    <style>
+        :root {
+            --primary: #4338ca;
+            --primary-hover: #3730a3;
+            --bg-color: #eef2ff;
+            --surface: #ffffff;
+            --text-main: #1e293b;
+            --text-muted: #64748b;
+            
+            --color-rooms: #2563eb;
+            --color-residents: #059669;
+            --color-capacity: #7c3aed;
+            --color-beds: #d97706;
+        }
+
+        body { 
+            background-color: var(--bg-color); 
+            font-family: 'Inter', sans-serif; 
+            color: var(--text-main);
+            padding-bottom: 3rem;
+            font-size: 0.95rem; 
+        }
+
+        .hidden { display: none !important; }
+
+        h2, h4, h5 { font-weight: 800; color: #0f172a; letter-spacing: -0.3px; }
+        
+        .navbar { 
+            background: #1e1b4b; 
+            padding: 0.8rem 0; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .navbar-brand { font-weight: 800; font-size: 1.3rem; letter-spacing: -0.5px; color: #fff !important; }
+        
+        .card { 
+            border: none; 
+            border-radius: 12px; 
+            box-shadow: 0 8px 16px -4px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04); 
+            background: var(--surface);
+        }
+        
+        .stat-card { 
+            text-align: center; 
+            padding: 1.25rem 1rem; 
+            border-radius: 12px;
+            color: white;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .stat-card:hover { transform: translateY(-3px); box-shadow: 0 10px 20px rgba(0,0,0,0.12); }
+        .stat-card h6 { font-size: 0.75rem; text-transform: uppercase; font-weight: 700; letter-spacing: 0.8px; margin-bottom: 0.4rem; opacity: 0.9; }
+        .stat-card h3 { font-size: 2rem; font-weight: 800; margin: 0; }
+        
+        .bg-rooms { background: linear-gradient(135deg, #3b82f6, #1d4ed8); }
+        .bg-residents { background: linear-gradient(135deg, #10b981, #047857); }
+        .bg-capacity { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+        .bg-beds { background: linear-gradient(135deg, #f59e0b, #b45309); }
+
+        .form-control, .form-select { 
+            border-radius: 8px; 
+            border: 1.5px solid #cbd5e1; 
+            padding: 0.6rem 1rem; 
+            font-size: 0.9rem; 
+            font-weight: 500;
+            color: var(--text-main);
+            background-color: #f8fafc;
+        }
+        .form-control:focus, .form-select:focus { 
+            border-color: var(--primary); 
+            background-color: var(--surface);
+            box-shadow: 0 0 0 3px rgba(67, 56, 202, 0.15);
+        }
+        .form-label { font-weight: 700; color: #1e293b; font-size: 0.85rem; margin-bottom: 0.3rem; }
+        
+        .btn { 
+            border-radius: 8px; 
+            padding: 0.5rem 1.25rem; 
+            font-weight: 700; 
+            font-size: 0.9rem;
+            transition: all 0.2s ease; 
+        }
+        .btn-primary { background-color: var(--primary); border: none; }
+        .btn-primary:hover { background-color: var(--primary-hover); transform: translateY(-1px); box-shadow: 0 4px 10px rgba(67, 56, 202, 0.25); }
+        .btn-success { background-color: #059669; border: none; }
+        .btn-warning { background-color: #f59e0b; border: none; color: #fff; }
+        .btn-sm { padding: 0.3rem 0.6rem; font-size: 0.8rem; }
+        
+        .btn-action-del { background-color: #ef4444; color: #fff; border: none; font-weight: 600; box-shadow: 0 2px 4px rgba(239, 68, 68, 0.2); }
+        .btn-action-del:hover { background-color: #dc2626; color: #fff; transform: scale(1.03); }
+
+        .nav-tabs { border-bottom: none; gap: 0.5rem; margin-bottom: 1rem !important; }
+        .nav-tabs .nav-link { 
+            color: #475569; 
+            font-weight: 700; 
+            font-size: 0.9rem;
+            border: none; 
+            background: #e2e8f0;
+            padding: 0.6rem 1.4rem; 
+            border-radius: 20px;
+            transition: all 0.2s;
+        }
+        .nav-tabs .nav-link:hover { background: #cbd5e1; color: #1e293b; }
+        .nav-tabs .nav-link.active { 
+            color: #ffffff; 
+            background: var(--primary); 
+            box-shadow: 0 3px 8px rgba(67, 56, 202, 0.3);
+        }
+
+        .table { margin-bottom: 0; border-collapse: separate; border-spacing: 0; }
+        .table th { 
+            background-color: #f8fafc; 
+            color: #475569; 
+            font-weight: 800; 
+            text-transform: uppercase; 
+            font-size: 0.75rem; 
+            letter-spacing: 0.5px; 
+            border-bottom: 2px solid #cbd5e1 !important; 
+            padding: 1rem 0.8rem; 
+        }
+        .table td { 
+            padding: 0.8rem; 
+            vertical-align: middle; 
+            color: var(--text-main); 
+            border-bottom: 1px solid #e2e8f0; 
+            font-size: 0.9rem; 
+            font-weight: 500;
+        }
+        
+        .group-header-1 td { 
+            background-color: #1e293b !important; 
+            font-weight: 800; 
+            color: #ffffff !important; 
+            font-size: 0.9rem; 
+            text-transform: uppercase; 
+            letter-spacing: 0.5px; 
+            border-bottom: none !important;
+            padding-top: 0.8rem !important;
+            padding-bottom: 0.8rem !important;
+        }
+        
+        .group-header-2 td {
+            background-color: #e0e7ff !important; 
+            font-weight: 700;
+            color: #3730a3 !important;
+            font-size: 0.85rem;
+            padding-left: 1.5rem !important;
+            border-bottom: 1px solid #c7d2fe !important;
+        }
+        
+        .nested-row td:first-child { padding-left: 2rem !important; }
+
+        .badge { padding: 0.5em 0.8em; border-radius: 6px; font-weight: 700; letter-spacing: 0.3px; font-size: 0.75rem; box-shadow: 0 1px 2px rgba(0,0,0,0.05); }
+        .bg-success { background-color: #10b981 !important; color: white !important;}
+        .bg-primary { background-color: var(--primary) !important; color: white !important;}
+        .bg-warning { background-color: #f59e0b !important; color: white !important;}
+        .bg-danger { background-color: #ef4444 !important; color: white !important;}
+        .badge-floor { background-color: #334155; color: white; }
+
+        .section { animation: fadeIn 0.25s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .resident-row { 
+            background: #ffffff; 
+            border: 1px solid #e2e8f0; 
+            padding: 1rem; 
+            border-radius: 8px; 
+            margin-bottom: 0.8rem; 
+            position: relative; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        .remove-row-btn { 
+            position: absolute; 
+            top: -10px; right: -10px; 
+            cursor: pointer; 
+            color: #ffffff; 
+            font-weight: bold; 
+            width: 24px; height: 24px; 
+            display: flex; align-items: center; justify-content: center; 
+            border-radius: 50%; 
+            background: #ef4444; 
+            border: 2px solid #ffffff;
+            font-size: 0.75rem;
+            box-shadow: 0 2px 4px rgba(239, 68, 68, 0.3);
+        }
+
+        .accordion-button:not(.collapsed) { background-color: #f8fafc; color: var(--text-main); box-shadow: none; }
+        .accordion-button:focus { box-shadow: none; border-color: rgba(0,0,0,0.125); }
+    </style>
+</head>
+<body>
+
+<nav class="navbar navbar-expand-lg navbar-dark mb-4">
+    <div class="container d-flex justify-content-between align-items-center">
+        <a class="navbar-brand d-flex align-items-center gap-2" href="#">
+            <span style="font-size: 1.2rem; background: rgba(255,255,255,0.1); padding: 4px 8px; border-radius: 6px;">🏢</span> 
+            HOSTEL HUB
+        </a>
+        <div class="d-flex gap-2">
+            <button class="btn btn-outline-light fw-bold px-3 btn-sm" onclick="showSection('resident')">🏠 Home Portal</button>
+            <button class="btn btn-light text-primary fw-bold px-3 btn-sm shadow-sm" id="adminNavBtn" onclick="showSection('admin-login')">🛡️ Admin Login</button>
+        </div>
+    </div>
+</nav>
+
+<div class="container">
+    <div id="alert-container"></div>
+
+    <!-- Home / Resident Portal -->
+    <div id="resident-section" class="section">
+        <div class="text-center mb-5">
+            <h3 class="text-dark fw-bold">Welcome to Hostel Hub</h3>
+            <p class="text-muted">Explore live room availability or check your personal records.</p>
+        </div>
+        
+        <div class="row g-4 mx-auto" style="max-width: 1100px;">
+            <!-- Left Column: Live Room Availability (Main Public Focus) -->
+            <div class="col-md-7">
+                <div class="card p-4 shadow-sm h-100" style="border-top: 4px solid var(--color-residents);">
+                    <h5 class="fw-bold text-dark mb-4">🛏️ Live Room Availability</h5>
+                    <div id="resident-room-availability">
+                        <!-- JS Will populate this -->
+                        <div class="text-center text-muted py-3">Loading availability...</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Column: Secure Payment History Lookup -->
+            <div class="col-md-5">
+                <div class="card p-4 shadow-sm h-100 bg-white" style="border-top: 4px solid var(--primary);">
+                    <h5 class="fw-bold text-dark mb-3">👤 Resident Records</h5>
+                    <p class="text-muted mb-4" style="font-size: 0.85rem; line-height: 1.4;">
+                        To protect your privacy, please select your name and verify your assigned room number to view your payment history.
+                    </p>
+                    
+                    <label class="form-label">Select Profile</label>
+                    <select id="resident-select" class="form-select border-2 mb-3">
+                        <option value="">Loading profiles...</option>
+                    </select>
+                    
+                    <!-- NEW: Room Verification Field -->
+                    <label class="form-label">Room Number Verification</label>
+                    <input type="text" id="verify-room" class="form-control border-2 mb-4" placeholder="e.g., 101, A-202">
+                    
+                    <button class="btn btn-primary w-100 fw-bold text-uppercase" onclick="viewResidentRecords()">Secure View</button>
+                    
+                    <!-- Hidden Table for Payments -->
+                    <div class="table-responsive rounded border hidden mt-4 shadow-sm" id="resident-payments-table">
+                        <table class="table table-sm mb-0">
+                            <thead><tr><th>Month</th><th>Amount</th><th>Status</th></tr></thead>
+                            <tbody id="resident-payments-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Login -->
+    <div id="admin-login-section" class="section hidden">
+        <div class="text-center mb-4">
+            <h3 class="text-dark fw-bold">Admin Portal</h3>
+            <p class="text-muted">Secure access for hostel management.</p>
+        </div>
+        <div class="card p-4 mx-auto shadow-sm" style="max-width: 400px; border-top: 4px solid var(--primary);">
+            <label class="form-label">Username</label>
+            <input type="text" id="admin-user" class="form-control mb-3" placeholder="admin">
+            
+            <div class="d-flex justify-content-between align-items-end mb-1">
+                <label class="form-label mb-0">Password</label>
+                <a href="#" class="text-primary text-decoration-none" style="font-size: 0.8rem; font-weight: 700;" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">Forgot Password?</a>
+            </div>
+            <input type="password" id="admin-pass" class="form-control mb-4" placeholder="••••••••">
+            <button class="btn btn-primary w-100 py-2 text-uppercase" onclick="loginAdmin()">Login to Dashboard</button>
+        </div>
+    </div>
+
+    <!-- Admin Dashboard -->
+    <div id="admin-dash-section" class="section hidden">
+        <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded-3 shadow-sm border">
+            <div>
+                <h4 class="mb-1 text-dark">Dashboard Overview</h4>
+                <p class="text-muted mb-0" style="font-size: 0.85rem;">Manage rooms, residents, and monitor fee collections.</p>
+            </div>
+            <div class="d-flex gap-2">
+                <button class="btn btn-light border fw-bold px-3 btn-sm" data-bs-toggle="modal" data-bs-target="#changePasswordModal">⚙️ Settings</button>
+                <button class="btn btn-danger fw-bold px-3 btn-sm" onclick="logoutAdmin()">Logout</button>
+            </div>
+        </div>
+        
+        <!-- Metrics -->
+        <div class="row mb-4 g-3">
+            <div class="col-md-3"><div class="stat-card bg-rooms shadow-sm"><h6>Total Rooms</h6><h3 id="stat-rooms">0</h3></div></div>
+            <div class="col-md-3"><div class="stat-card bg-residents shadow-sm"><h6>Total Residents</h6><h3 id="stat-residents">0</h3></div></div>
+            <div class="col-md-3"><div class="stat-card bg-capacity shadow-sm"><h6>Total Capacity</h6><h3 id="stat-capacity">0</h3></div></div>
+            <div class="col-md-3"><div class="stat-card bg-beds shadow-sm"><h6>Available Beds</h6><h3 id="stat-beds">0</h3></div></div>
+        </div>
+
+        <ul class="nav nav-tabs">
+            <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#rooms">🛏️ Manage Rooms</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#residents">🧑‍🤝‍🧑 Manage Residents</a></li>
+            <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#payments">💰 Fee Payments</a></li>
+        </ul>
+
+        <div class="tab-content mt-3">
+            <!-- Rooms Tab -->
+            <div class="tab-pane fade show active" id="rooms">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="card p-3 shadow-sm border">
+                            <h6 class="mb-3 text-dark border-bottom pb-2 fw-bold">Create New Room</h6>
+                            <label class="form-label">Room Number</label>
+                            <input type="text" id="room-no" class="form-control mb-3" placeholder="e.g., 101, A-202">
+                            <label class="form-label">Bed Capacity</label>
+                            <input type="number" id="room-cap" class="form-control mb-3" placeholder="Total beds" min="1">
+                            <button class="btn btn-primary w-100 text-uppercase" onclick="createRoom()">Add Room</button>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card overflow-hidden shadow-sm border">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead><tr><th>Floor (Auto)</th><th>Room No</th><th>Capacity</th><th>Occupancy</th><th>Action</th></tr></thead>
+                                    <tbody id="rooms-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Residents Tab -->
+            <div class="tab-pane fade" id="residents">
+                <div class="row mb-3 g-3">
+                    <div class="col-md-7">
+                        <div class="card p-3 h-100 shadow-sm border">
+                            <div class="d-flex justify-content-between align-items-center mb-3 border-bottom pb-2">
+                                <h6 class="mb-0 text-dark fw-bold">Register Resident(s)</h6>
+                                <button class="btn btn-sm btn-dark fw-bold shadow-sm" onclick="addBulkResidentRow()">+ Add Row</button>
+                            </div>
+                            <div id="bulk-residents-container"></div>
+                            <button class="btn btn-success w-100 mt-2 text-uppercase fw-bold shadow-sm" onclick="submitBulkResidents()">Register All Records</button>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        <div class="card p-3 h-100 shadow-sm bg-white border">
+                            <h6 class="mb-3 text-dark border-bottom pb-2 fw-bold">Edit / Reassign</h6>
+                            <label class="form-label">Select Resident</label>
+                            <select id="edit-res-select" class="form-select mb-3" onchange="populateEditForm()"><option value="">Choose...</option></select>
+                            <label class="form-label">Update Name</label>
+                            <input type="text" id="edit-res-name" class="form-control mb-3" placeholder="Full Name">
+                            <label class="form-label">Reassign Room</label>
+                            <select id="edit-res-room" class="form-select mb-3"></select>
+                            <button class="btn btn-warning w-100 fw-bold text-white shadow-sm text-uppercase" onclick="updateResident()">Save Changes</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="card overflow-hidden shadow-sm border">
+                    <div class="table-responsive">
+                        <table class="table">
+                            <thead><tr><th>S.No</th><th>Name</th><th>Assigned Room</th><th>Floor</th><th>Action</th></tr></thead>
+                            <tbody id="residents-tbody"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payments Tab -->
+            <div class="tab-pane fade" id="payments">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="card p-3 mb-3 shadow-sm border">
+                            <h6 class="mb-3 text-dark border-bottom pb-2 fw-bold">Log Payment</h6>
+                            <label class="form-label">Select Resident</label>
+                            <select id="pay-res-select" class="form-select mb-3"><option value="">Search...</option></select>
+                            
+                            <label class="form-label">Amount Paid</label>
+                            <input type="number" id="pay-amount" class="form-control mb-3" placeholder="₹ 0.00" min="0" step="100">
+                            
+                            <div class="row mb-3">
+                                <div class="col-6">
+                                    <label class="form-label">Month</label>
+                                    <select id="pay-month" class="form-select">
+                                        <option value="Jan">Jan</option><option value="Feb">Feb</option><option value="Mar">Mar</option>
+                                        <option value="Apr">Apr</option><option value="May">May</option><option value="Jun">Jun</option>
+                                        <option value="Jul">Jul</option><option value="Aug">Aug</option><option value="Sep">Sep</option>
+                                        <option value="Oct">Oct</option><option value="Nov">Nov</option><option value="Dec">Dec</option>
+                                    </select>
+                                </div>
+                                <div class="col-6">
+                                    <label class="form-label">Status</label>
+                                    <select id="pay-status" class="form-select">
+                                        <option value="Paid">Paid</option><option value="Pending">Pending</option><option value="Overdue">Overdue</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-success w-100 text-uppercase fw-bold shadow-sm" onclick="recordPayment()">Save Payment</button>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card overflow-hidden shadow-sm border">
+                            <div class="table-responsive">
+                                <table class="table">
+                                    <thead><tr><th>S.No</th><th>Resident Name</th><th>Room</th><th>Amount</th><th>Status</th><th>Action</th></tr></thead>
+                                    <tbody id="payments-tbody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- All Modals -->
+<div class="modal fade" id="changePasswordModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-0 pb-0 mt-2 mx-2">
+        <h6 class="modal-title fw-bold text-dark">Change Password</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body px-4 py-3">
+        <label class="form-label">Current Password</label>
+        <input type="password" id="old-pass" class="form-control mb-3" placeholder="••••••••">
+        <label class="form-label">New Password</label>
+        <input type="password" id="new-pass" class="form-control mb-1" placeholder="••••••••">
+      </div>
+      <div class="modal-footer border-0 pt-0 mb-2 mx-2">
+        <button type="button" class="btn btn-light fw-bold btn-sm" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="updatePassword()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="updateRoomModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-0 pb-0 mt-2 mx-2">
+        <h6 class="modal-title fw-bold text-dark">Edit: Room <span id="update-room-display" class="text-primary"></span></h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body px-4 py-3">
+        <input type="hidden" id="update-room-no">
+        <label class="form-label">New Total Capacity</label>
+        <input type="number" id="update-room-cap" class="form-control" min="1">
+      </div>
+      <div class="modal-footer border-0 pt-0 mb-2 mx-2">
+        <button type="button" class="btn btn-light fw-bold btn-sm" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="submitRoomUpdate()">Save</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-0 pb-0 mt-2 mx-2">
+        <h6 class="modal-title fw-bold text-dark">Reset Password</h6>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body px-4 py-3">
+        <p class="text-muted" style="font-size: 0.85rem;">Enter the admin email to receive a secure reset link.</p>
+        <label class="form-label">Email Address</label>
+        <input type="email" id="reset-request-email" class="form-control" placeholder="admin@example.com">
+      </div>
+      <div class="modal-footer border-0 pt-0 mb-2 mx-2">
+        <button type="button" class="btn btn-light fw-bold btn-sm" data-bs-dismiss="modal">Cancel</button>
+        <button type="button" class="btn btn-primary btn-sm" onclick="sendResetEmail()">Send Link</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="enterNewPasswordModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content border-0 shadow">
+      <div class="modal-header border-0 pb-0 mt-2 mx-2">
+        <h6 class="modal-title fw-bold text-dark">Create New Password</h6>
+      </div>
+      <div class="modal-body px-4 py-3">
+        <input type="hidden" id="auth-reset-token">
+        <label class="form-label">New Password</label>
+        <input type="password" id="auth-new-pass" class="form-control" placeholder="••••••••">
+      </div>
+      <div class="modal-footer border-0 pt-0 mb-2 mx-2 d-block">
+        <button type="button" class="btn btn-primary w-100 text-uppercase" onclick="submitNewPassword()">Set Password</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+    const API_URL = ""; 
+    let globalRooms = [], globalResidents = [];
+    let roomOptionsHTML = "";
+
+    function showAlert(message, type = 'success') {
+        const box = document.getElementById('alert-container');
+        const icon = type === 'success' ? '✅' : type === 'warning' ? '⚠️' : '❌';
+        box.innerHTML = `<div class="alert alert-${type} alert-dismissible shadow-sm fade show border-0 d-flex align-items-center gap-2 mb-3" style="border-radius: 8px; padding: 0.8rem 1rem;">
+            <span style="font-size:1.1rem;">${icon}</span>
+            <div class="fw-bold text-dark flex-grow-1" style="font-size:0.9rem;">${message}</div>
+            <button type="button" class="btn-close position-relative top-0 end-0 py-2" data-bs-dismiss="alert"></button>
+        </div>`;
+        setTimeout(() => { box.innerHTML = ''; }, 4000);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Capture URL Reset Token on Load
+    window.onload = () => { 
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        if (token) {
+            document.getElementById('auth-reset-token').value = token;
+            new bootstrap.Modal(document.getElementById('enterNewPasswordModal')).show();
+            window.history.replaceState({}, document.title, "/"); 
+        } else {
+            showSection('resident'); 
+        }
+    };
+
+    function deriveFloor(roomNo) {
+        if (!roomNo) return "Unknown Floor";
+        const upper = roomNo.toUpperCase();
+        if (upper.startsWith('G')) return "Ground Floor";
+        const match = roomNo.match(/\d/);
+        if (match) {
+            const digit = match[0];
+            if (digit === '0') return "Ground Floor";
+            if (digit === '1') return "1st Floor";
+            if (digit === '2') return "2nd Floor";
+            if (digit === '3') return "3rd Floor";
+            return digit + "th Floor";
+        }
+        return "Ground Floor"; 
+    }
+
+    function generateFloorGroupedRoomOptions(rooms, defaultText, includeRoomNo = null) {
+        const grouped = {};
+        rooms.forEach(r => {
+            if(r.occupancy < r.capacity || r.room_number === includeRoomNo) {
+                const floor = deriveFloor(r.room_number);
+                if(!grouped[floor]) grouped[floor] = [];
+                grouped[floor].push(r);
+            }
+        });
+        let html = `<option value="">${defaultText}</option>`;
+        for(let floor in grouped) {
+            html += `<optgroup label="${floor}">`;
+            grouped[floor].forEach(r => {
+                const avail = r.capacity - r.occupancy;
+                const txt = r.room_number === includeRoomNo ? `${r.room_number} (Current)` : `${r.room_number} (Avail: ${avail})`;
+                html += `<option value="${r.room_number}">${txt}</option>`;
+            });
+            html += `</optgroup>`;
+        }
+        return html;
+    }
+
+    function generateResidentGroupedOptions(residents, defaultText) {
+        // Flat list mapping just IDs to Names for the secure view
+        let html = `<option value="">${defaultText}</option>`;
+        
+        // Sorting alphabetically by name for easy searching
+        const sorted = [...residents].sort((a,b) => a.name.localeCompare(b.name));
+        sorted.forEach(r => {
+            html += `<option value="${r.id}">${r.name}</option>`;
+        });
+        return html;
+    }
+
+    function showSection(sectionId) {
+        document.querySelectorAll('.section').forEach(el => el.classList.add('hidden'));
+        if(sectionId === 'admin-login' && sessionStorage.getItem('admin_logged_in') === 'true') {
+            document.getElementById('admin-dash-section').classList.remove('hidden');
+            document.getElementById('adminNavBtn').innerHTML = "🛡️ Dashboard";
+            fetchDashboardData();
+        } else if (sectionId === 'admin-login') {
+            document.getElementById('admin-login-section').classList.remove('hidden');
+        } else {
+            document.getElementById('resident-section').classList.remove('hidden');
+            loadResidentPortal();
+        }
+    }
+
+    async function loadResidentPortal() {
+        const [resRes, roomRes] = await Promise.all([
+            fetch(`${API_URL}/residents/`),
+            fetch(`${API_URL}/rooms/`)
+        ]);
+        
+        globalResidents = await resRes.json();
+        const rooms = await roomRes.json();
+        
+        document.getElementById('resident-select').innerHTML = generateResidentGroupedOptions(globalResidents, "Select your name...");
+        document.getElementById('resident-payments-table').classList.add('hidden');
+        document.getElementById('verify-room').value = '';
+        
+        renderResidentRoomAvailability(rooms);
+    }
+    
+    function renderResidentRoomAvailability(rooms) {
+        const container = document.getElementById('resident-room-availability');
+        const availableRooms = rooms.filter(r => r.capacity > r.occupancy);
+        
+        if (availableRooms.length === 0) {
+            container.innerHTML = `<div class="alert alert-warning border-0 shadow-sm text-center fw-bold">
+                <span class="fs-4 d-block mb-2">🚫</span> No beds currently available.
+            </div>`;
+            return;
+        }
+
+        const roomsByFloor = {};
+        availableRooms.forEach(r => {
+            const floor = deriveFloor(r.room_number);
+            if (!roomsByFloor[floor]) roomsByFloor[floor] = [];
+            roomsByFloor[floor].push(r);
+        });
+
+        let html = '<div class="accordion shadow-sm" id="availRoomsAccordion" style="border-radius:12px; overflow:hidden;">';
+        let floorIndex = 0;
+        
+        Object.keys(roomsByFloor).sort().forEach(floor => {
+            const floorRooms = roomsByFloor[floor];
+            const totalAvailInFloor = floorRooms.reduce((sum, r) => sum + (r.capacity - r.occupancy), 0);
+            
+            html += `
+            <div class="accordion-item border-0 border-bottom">
+                <h2 class="accordion-header" id="heading${floorIndex}">
+                    <button class="accordion-button ${floorIndex !== 0 ? 'collapsed' : ''} fw-bold bg-white text-dark py-3" type="button" data-bs-toggle="collapse" data-bs-target="#collapse${floorIndex}">
+                        📍 ${floor} 
+                        <span class="badge bg-success ms-auto me-2 shadow-sm">${totalAvailInFloor} Beds Avail</span>
+                    </button>
+                </h2>
+                <div id="collapse${floorIndex}" class="accordion-collapse collapse ${floorIndex === 0 ? 'show' : ''}" data-bs-parent="#availRoomsAccordion">
+                    <div class="accordion-body bg-light p-3">
+                        <div class="row g-2">
+            `;
+            
+            floorRooms.sort((a,b) => a.room_number.localeCompare(b.room_number, undefined, {numeric: true})).forEach(r => {
+                const avail = r.capacity - r.occupancy;
+                html += `
+                    <div class="col-6 col-sm-4">
+                        <div class="card p-2 text-center border-0 shadow-sm h-100">
+                            <span class="fw-bold text-dark mb-1" style="font-size:0.85rem;">🚪 ${r.room_number}</span>
+                            <span class="badge bg-primary px-2 py-1 mx-auto">${avail} Bed${avail > 1 ? 's' : ''}</span>
+                        </div>
+                    </div>
+                `;
+            });
+            
+            html += `
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+            floorIndex++;
+        });
+        html += '</div>';
+        container.innerHTML = html;
+    }
+
+    async function viewResidentRecords() {
+        const id = parseInt(document.getElementById('resident-select').value);
+        const verifyRoom = document.getElementById('verify-room').value.trim();
+
+        if (!id) return showAlert('Please select your profile.', 'warning');
+        if (!verifyRoom) return showAlert('Please enter your room number to verify.', 'warning');
+
+        // Security check
+        const resProfile = globalResidents.find(r => r.id === id);
+        if (resProfile.room_number.toLowerCase() !== verifyRoom.toLowerCase()) {
+            document.getElementById('resident-payments-table').classList.add('hidden');
+            return showAlert('Verification failed: Incorrect Room Number.', 'danger');
+        }
+
+        const res = await fetch(`${API_URL}/payments/resident/${id}`);
+        const payments = await res.json();
+        const tbody = document.getElementById('resident-payments-tbody');
+        tbody.innerHTML = '';
+        
+        if (payments.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="3" class="text-center text-muted py-4">No payment records found.</td></tr>';
+        } else {
+            payments.forEach(p => {
+                const badge = p.status === 'Paid' ? 'bg-success' : p.status === 'Pending' ? 'bg-warning text-dark' : 'bg-danger';
+                tbody.innerHTML += `<tr>
+                    <td class="fw-bold text-dark">${p.month}</td>
+                    <td class="fw-bold text-dark">₹${p.amount.toLocaleString('en-IN')}</td>
+                    <td><span class="badge ${badge}">${p.status}</span></td>
+                </tr>`;
+            });
+        }
+        document.getElementById('resident-payments-table').classList.remove('hidden');
+        showAlert('Verification successful. Records displayed.', 'success');
+    }
+
+    async function loginAdmin() {
+        const u = document.getElementById('admin-user').value;
+        const p = document.getElementById('admin-pass').value;
+        const res = await fetch(`${API_URL}/admin/login`, {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({username: u, password: p})
+        });
+        const data = await res.json();
+        if (data.success) {
+            sessionStorage.setItem('admin_logged_in', 'true');
+            showSection('admin-login'); 
+        } else { showAlert('Invalid credentials', 'danger'); }
+    }
+
+    function logoutAdmin() {
+        sessionStorage.removeItem('admin_logged_in');
+        document.getElementById('admin-user').value = ''; document.getElementById('admin-pass').value = '';
+        document.getElementById('adminNavBtn').innerHTML = "🛡️ Admin Login";
+        showSection('resident');
+    }
+
+    async function sendResetEmail() {
+        const email = document.getElementById('reset-request-email').value;
+        if(!email) return alert("Please enter email");
+        await fetch(`${API_URL}/admin/forgot-password`, {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({email: email})
+        });
+        showAlert('If the email matches an admin account, a reset link has been sent.', 'success');
+        document.getElementById('reset-request-email').value = '';
+        bootstrap.Modal.getInstance(document.getElementById('forgotPasswordModal')).hide();
+    }
+
+    async function submitNewPassword() {
+        const token = document.getElementById('auth-reset-token').value;
+        const newPass = document.getElementById('auth-new-pass').value;
+        if(!newPass) return alert("Enter new password");
+        const res = await fetch(`${API_URL}/admin/reset-password`, {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({token: token, new_password: newPass})
+        });
+        if(res.ok) {
+            showAlert('Password reset successfully! Please log in.', 'success');
+            bootstrap.Modal.getInstance(document.getElementById('enterNewPasswordModal')).hide();
+            showSection('admin-login');
+        } else {
+            const err = await res.json(); showAlert(err.detail || 'Error resetting password', 'danger');
+        }
+    }
+
+    async function updatePassword() {
+        const oldPass = document.getElementById('old-pass').value;
+        const newPass = document.getElementById('new-pass').value;
+        if(!oldPass || !newPass) return alert("Please fill both fields.");
+        const res = await fetch(`${API_URL}/admin/password`, {
+            method: 'PUT', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({old_password: oldPass, new_password: newPass})
+        });
+        if(res.ok) {
+            showAlert('Password updated successfully!');
+            document.getElementById('old-pass').value = ''; document.getElementById('new-pass').value = '';
+            bootstrap.Modal.getInstance(document.getElementById('changePasswordModal')).hide();
+        } else {
+            const err = await res.json(); showAlert(err.detail || 'Error updating password', 'danger');
+        }
+    }
+
+    async function fetchDashboardData() {
+        const [resRooms, resRes, resPay] = await Promise.all([
+            fetch(`${API_URL}/rooms/`), fetch(`${API_URL}/residents/`), fetch(`${API_URL}/payments/`)
+        ]);
+        globalRooms = await resRooms.json();
+        globalResidents = await resRes.json();
+        const payments = await resPay.json();
+
+        const tCap = globalRooms.reduce((sum, r) => sum + r.capacity, 0);
+        const tOcc = globalRooms.reduce((sum, r) => sum + r.occupancy, 0);
+        document.getElementById('stat-rooms').innerText = globalRooms.length;
+        document.getElementById('stat-residents').innerText = globalResidents.length;
+        document.getElementById('stat-capacity').innerText = tCap;
+        document.getElementById('stat-beds').innerText = tCap - tOcc;
+
+        globalRooms.sort((a, b) => deriveFloor(a.room_number).localeCompare(deriveFloor(b.room_number)));
+        document.getElementById('rooms-tbody').innerHTML = globalRooms.map(r => 
+            `<tr>
+                <td><span class="badge badge-floor border">${deriveFloor(r.room_number)}</span></td>
+                <td class="fw-bold text-dark">${r.room_number}</td>
+                <td>${r.capacity}</td>
+                <td>${r.occupancy}</td>
+                <td><button class="btn btn-sm btn-light border fw-bold shadow-sm" onclick="promptUpdateRoom('${r.room_number}', ${r.capacity})">Edit</button></td>
+            </tr>`
+        ).join('');
+
+        const resByFloor = {};
+        globalResidents.forEach(r => {
+            const floor = deriveFloor(r.room_number);
+            if(!resByFloor[floor]) resByFloor[floor] = {};
+            if(!resByFloor[floor][r.room_number]) resByFloor[floor][r.room_number] = [];
+            resByFloor[floor][r.room_number].push(r);
+        });
+        
+        let resHtml = '';
+        let resSno = 1; 
+        Object.keys(resByFloor).sort().forEach(floor => {
+            resHtml += `<tr class="group-header-1"><td colspan="5">📍 ${floor}</td></tr>`;
+            Object.keys(resByFloor[floor]).sort((a,b) => a.localeCompare(b, undefined, {numeric: true})).forEach(room => {
+                resHtml += `<tr class="group-header-2"><td colspan="5">🚪 Room ${room}</td></tr>`;
+                resByFloor[floor][room].forEach(r => {
+                    resHtml += `<tr class="nested-row">
+                        <td class="text-muted fw-bold">${resSno++}</td>
+                        <td class="fw-bold text-dark">${r.name}</td>
+                        <td class="text-muted fw-bold">${r.room_number}</td>
+                        <td><span class="badge badge-floor">${floor}</span></td>
+                        <td><button class="btn btn-sm btn-action-del" onclick="deleteResident(${r.id})">Remove</button></td>
+                    </tr>`;
+                });
+            });
+        });
+        document.getElementById('residents-tbody').innerHTML = resHtml;
+
+        const payByMonth = {};
+        const monthlyTotals = {}; 
+        payments.forEach(p => {
+            const res = globalResidents.find(r => r.id === p.resident_id) || {name: 'Unknown', room_number: 'N/A'};
+            const month = p.month || 'Unknown';
+            const room = res.room_number || 'Unknown';
+            
+            if(!payByMonth[month]) { payByMonth[month] = {}; monthlyTotals[month] = 0; }
+            if(!payByMonth[month][room]) { payByMonth[month][room] = []; }
+            payByMonth[month][room].push({...p, res});
+            if(p.status === 'Paid') { monthlyTotals[month] += p.amount; }
+        });
+
+        const monthOrder = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+        
+        let payHtml = '';
+        let paySno = 1; 
+        Object.keys(payByMonth).sort((a, b) => {
+            let indexA = monthOrder.indexOf(a); let indexB = monthOrder.indexOf(b);
+            if(indexA === -1) indexA = 99; if(indexB === -1) indexB = 99;
+            return indexA - indexB;
+        }).forEach(month => {
+            const totalFormatted = monthlyTotals[month].toLocaleString('en-IN');
+            payHtml += `<tr class="group-header-1">
+                <td colspan="6">
+                    <div class="d-flex justify-content-between align-items-center w-100 pe-2">
+                        <span>📅 ${month} FEE COLLECTION</span>
+                        <span class="badge bg-success px-2 py-1 shadow-sm border border-light">Received: ₹${totalFormatted}</span>
+                    </div>
+                </td>
+            </tr>`;
+            
+            Object.keys(payByMonth[month]).sort((a,b) => a.localeCompare(b, undefined, {numeric: true})).forEach(room => {
+                payHtml += `<tr class="group-header-2"><td colspan="6">🚪 Room ${room}</td></tr>`;
+                payByMonth[month][room].forEach(item => {
+                    const p = item; const res = item.res;
+                    const badge = p.status === 'Paid' ? 'bg-success' : p.status === 'Pending' ? 'bg-warning text-white' : 'bg-danger';
+                    payHtml += `<tr class="nested-row">
+                        <td class="text-muted fw-bold">${paySno++}</td>
+                        <td class="fw-bold text-dark">${res.name}</td>
+                        <td class="text-muted fw-bold">${res.room_number}</td>
+                        <td class="fw-bold text-dark">₹${p.amount.toLocaleString('en-IN')}</td>
+                        <td><span class="badge ${badge}">${p.status}</span></td>
+                        <td><button class="btn btn-sm btn-action-del" onclick="deletePayment(${p.id})">Clear</button></td>
+                    </tr>`;
+                });
+            });
+        });
+        document.getElementById('payments-tbody').innerHTML = payHtml;
+        updateDropdowns();
+    }
+
+    function updateDropdowns() {
+        const floorRoomHtml = generateFloorGroupedRoomOptions(globalRooms, "Assign Available Room");
+        
+        // Update the global HTML template so new bulk rows use the updated dropdown
+        roomOptionsHTML = floorRoomHtml;
+        
+        // Wipe and recreate bulk rows to apply new room capacities
+        document.getElementById('bulk-residents-container').innerHTML = '';
+        addBulkResidentRow(); 
+        
+        // The admin side uses a structured (Floor -> Room) dropdown for easy finding
+        document.getElementById('pay-res-select').innerHTML = `<option value="">Search Resident...</option>` + 
+            [...globalResidents].sort((a,b)=>a.name.localeCompare(b.name)).map(r => `<option value="${r.id}">${r.name} (Room ${r.room_number})</option>`).join('');
+            
+        document.getElementById('edit-res-select').innerHTML = `<option value="">Select Resident to Edit...</option>` + 
+            [...globalResidents].sort((a,b)=>a.name.localeCompare(b.name)).map(r => `<option value="${r.id}">${r.name} (Room ${r.room_number})</option>`).join('');
+    }
+
+    async function createRoom() {
+        const no = document.getElementById('room-no').value;
+        const cap = document.getElementById('room-cap').value;
+        if(!no || !cap) return showAlert('Fill room number and capacity', 'warning');
+        
+        const resp = await fetch(`${API_URL}/rooms/`, {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({room_number: no, capacity: parseInt(cap)})
+        });
+
+        if(resp.ok) {
+            showAlert('Room created successfully!');
+            document.getElementById('room-no').value = ''; document.getElementById('room-cap').value = '';
+            fetchDashboardData();
+        } else {
+            const err = await resp.json(); showAlert(err.detail || 'Error creating room', 'danger');
+        }
+    }
+
+    function promptUpdateRoom(roomNo, currentCap) {
+        document.getElementById('update-room-no').value = roomNo;
+        document.getElementById('update-room-display').innerText = roomNo;
+        document.getElementById('update-room-cap').value = currentCap;
+        new bootstrap.Modal(document.getElementById('updateRoomModal')).show();
+    }
+
+    async function submitRoomUpdate() {
+        const roomNo = document.getElementById('update-room-no').value;
+        const newCap = parseInt(document.getElementById('update-room-cap').value);
+        if(!newCap || newCap < 1) return showAlert("Enter a valid capacity", "warning");
+
+        const resp = await fetch(`${API_URL}/rooms/${roomNo}`, {
+            method: 'PUT', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({capacity: newCap})
+        });
+        
+        if(resp.ok) {
+            showAlert('Room capacity updated successfully!');
+            bootstrap.Modal.getInstance(document.getElementById('updateRoomModal')).hide();
+            fetchDashboardData();
+        } else { const err = await resp.json(); showAlert(err.detail, 'danger'); }
+    }
+
+    function addBulkResidentRow() {
+        const container = document.getElementById('bulk-residents-container');
+        const html = `<div class="resident-row shadow-sm">
+            <span class="remove-row-btn" onclick="this.parentElement.remove()">✕</span>
+            <div class="row g-2">
+                <div class="col-sm-7"><input type="text" class="form-control bulk-res-name" placeholder="Resident Full Name"></div>
+                <div class="col-sm-5"><select class="form-select bulk-res-room">${roomOptionsHTML}</select></div>
+            </div>
+        </div>`;
+        container.insertAdjacentHTML('beforeend', html);
+    }
+
+    async function submitBulkResidents() {
+        const rows = document.querySelectorAll('.resident-row');
+        const payload = [];
+        for(let row of rows) {
+            const name = row.querySelector('.bulk-res-name').value.trim();
+            const room = row.querySelector('.bulk-res-room').value;
+            if(name || room) {
+                if(!name || !room) return showAlert("Please fill both name and room for all entered residents.", "warning");
+                payload.push({name: name, room_number: room});
+            }
+        }
+        if(payload.length === 0) return showAlert("Please add at least one resident.", "warning");
+        const resp = await fetch(`${API_URL}/residents/bulk`, {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify(payload)
+        });
+        if(resp.ok) {
+            const data = await resp.json();
+            showAlert(`Successfully registered ${data.added_count} resident(s)!`);
+            fetchDashboardData();
+        } else { const err = await resp.json(); showAlert(err.detail, "danger"); }
+    }
+
+    function populateEditForm() {
+        const id = parseInt(document.getElementById('edit-res-select').value);
+        if(!id) {
+            document.getElementById('edit-res-name').value = '';
+            document.getElementById('edit-res-room').innerHTML = '';
+            return;
+        }
+        const res = globalResidents.find(r => r.id === id);
+        document.getElementById('edit-res-name').value = res.name;
+        document.getElementById('edit-res-room').innerHTML = generateFloorGroupedRoomOptions(globalRooms, "Select New Room", res.room_number);
+        document.getElementById('edit-res-room').value = res.room_number;
+    }
+
+    async function updateResident() {
+        const id = document.getElementById('edit-res-select').value;
+        const name = document.getElementById('edit-res-name').value;
+        const room = document.getElementById('edit-res-room').value;
+        if(!id) return;
+        const resp = await fetch(`${API_URL}/residents/${id}`, {
+            method: 'PUT', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({name: name, room_number: room})
+        });
+        if(resp.ok) { showAlert('Resident updated successfully!'); fetchDashboardData(); } 
+        else { const err = await resp.json(); showAlert(err.detail, 'danger'); }
+    }
+
+    async function deleteResident(id) {
+        if(confirm(`Remove this resident? (Deletes payment history and frees up the bed)`)) {
+            const resp = await fetch(`${API_URL}/residents/${id}`, { method: 'DELETE' });
+            if (resp.ok) { showAlert('Resident removed!', 'success'); fetchDashboardData(); } 
+            else showAlert('Failed to remove resident.', 'danger');
+        }
+    }
+
+    async function recordPayment() {
+        const resId = document.getElementById('pay-res-select').value;
+        const amount = document.getElementById('pay-amount').value;
+        const month = document.getElementById('pay-month').value;
+        const status = document.getElementById('pay-status').value;
+        if(!resId || !amount) return showAlert('Please fill all payment fields.', 'warning');
+        await fetch(`${API_URL}/payments/`, {
+            method: 'POST', headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({resident_id: parseInt(resId), amount: parseFloat(amount), month: month, status: status})
+        });
+        showAlert('Payment logged successfully!'); fetchDashboardData();
+    }
+
+    async function deletePayment(id) {
+        if(confirm(`Permanently delete Payment Record ID ${id}?`)) {
+            await fetch(`${API_URL}/payments/${id}`, { method: 'DELETE' });
+            showAlert('Payment deleted!', 'success'); fetchDashboardData();
+        }
+    }
+</script>
+</body>
+</html>
