@@ -11,8 +11,10 @@ from pydantic import BaseModel
 # ==========================================
 # DATABASE SETUP (Using Old DB Structure)
 # ==========================================
-SQLALCHEMY_DATABASE_URL = "sqlite:///./hostel_database.db"
-engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+# SQLALCHEMY_DATABASE_URL = "sqlite:///./hostel_database.db"
+SQLALCHEMY_DATABASE_URL = "postgresql://neondb_owner:npg_Rd3qM0VCKyOP@ep-old-feather-bey2eq2z-pooler.c-9.us-east-2.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+# engine = create_engine(SQLALCHEMY_DATABASE_URL, connect_args={"check_same_thread": False})
+engine = create_engine(SQLALCHEMY_DATABASE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 

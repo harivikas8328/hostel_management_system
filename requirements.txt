@@ -2,8 +2,8 @@ fastapi
 uvicorn
 sqlalchemy
 pydantic
-streamlit
-requests
-pandas
+psycopg2-binary
 
 #.        http://127.0.0.1:8000/
+
+# https://console.neon.tech/app/projects/late-sun-60156993/branches/br-twilight-hill-bem8mdpd?database=neondb
